@@ -1,0 +1,48 @@
+{{template "header" .}}
+
+
+<div id="content" class="ui text container">
+    <h2>Okta / SAML IdP Configuration</h2>
+
+    <hr>
+    <div>
+        <h3>Okta SAML App<h3>
+    </div>
+    <div>
+        <form action="/config" method="post">
+            <div class="form-group">
+                <label for="samlEmbedLink">Okta SAML Embed Link</label>
+                <input type="text" class="form-control" name="samlEmbedLink" placeholder="Enter Embed Link" value={{.Okta_app.EMBED_LINK}}>
+                <small id="saml1" class="form-text text-muted">URL to start IdP Initiated</small>
+            </div>
+            <button type="submit" class="btn btn-primary">Save SAML Settings</button>
+        </form>
+    </div>
+
+    <hr>
+    <div>
+        <h3>Okta OIDC App<h3>
+    </div>
+    <div>
+        <form action="/config" method="post">
+            <div class="form-group">
+                <label for="clientId">Client ID</label>
+                <input type="text" class="form-control" name="clientId" placeholder="Enter Client Id" value={{.Okta_app.CLIENT_ID}}>
+                <small id="oidc1" class="form-text text-muted">Okta SAML Assertion Flow Enabled OIDC App Id</small>
+            </div>
+            <div class="form-group">
+                <label for="clientSecret">Client Secret</label>
+                <input type="text" class="form-control" name="clientSecret" placeholder="Enter Client Secret" value={{.Okta_app.CLIENT_SECRET}}>
+                <small id="oidc2" class="form-text text-muted">Okta SAML Assertion Flow Enabled OIDC App Secret</small>
+            </div>
+            <div class="form-group">
+                <label for="tokenURL">Token URL</label>
+                <input type="text" class="form-control" name="tokenURL" placeholder="Enter Token Endpoint" value={{.Okta_app.TOKEN_EP}}>
+                <small id="oidc3" class="form-text text-muted">Authorization Server Token Endpoint URL</small>
+            </div>
+            <button type="submit" class="btn btn-primary">Save OIDC Settings</button>
+        </form>
+    </div>
+ 
+</div>
+{{template "footer"}}

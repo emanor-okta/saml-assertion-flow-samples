@@ -1,0 +1,24 @@
+{{template "header" .}}
+
+
+<div id="content" class="ui text container">
+  <h2>Okta SAML Assertion Flow Example</h2>
+
+  <div>
+    <p>SAML Assertion Flow Demonstration</p>
+    <p>Initiates an IdP initiatd Login using Okta's Embedded Link</p>
+    <p>Retrieves SAML response and removes the SAML Assertion</p>
+    <p>Uses the SAML assertion to call the Okta Org /token endpoint for an OIDC application setup for the SAML Assertion Flow</p>
+    <hr>
+    <p><a href="https://developer.okta.com/docs/guides/implement-saml2/overview/">Okta SAML Assertion Flow Documentation</a></p>
+    
+  </div>
+
+  <!--form method="get" action="login">
+    <button id="login-button" class="btn btn-primary" type="submit">Login</button>
+  </form-->
+
+
+
+</div>
+{{template "footer"}}

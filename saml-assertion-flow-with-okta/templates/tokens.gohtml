@@ -1,0 +1,43 @@
+{{template "header" .}}
+
+<div id="content" class="ui text container text-break" style="word-wrap: break-word;">
+  <h2>SAML Assertion Flow Call Stack</h2>
+
+   
+   <div>
+     <h4><<< Receive SAML Response</h4>
+     <pre>{{.SamlResp}}</pre>
+     <pre style="background-color: #F0F8FF; font-size: x-small;">
+<b>SAML Response Decoded:</b>
+{{.SamlRespD}}</pre>
+   </div>
+   <hr/>
+   <div>
+     <h4>>>> Send Okta Token Call with SAML Assertion</h4>
+     <pre>
+POST {{.TokenURL}}
+Content-Type: application/x-www-form-urlencoded
+Authorization: {{.BasicAuth}}
+
+grant_type: urn:ietf:params:oauth:grant-type:saml2-bearer
+scope: openid profile
+assertion: {{.SamlAssertion}}
+     </pre>
+     <pre style="background-color: #F0F8FF; font-size: x-small;">
+<b>SAML Assertion Decoded:</b>
+{{.SamlAssertionD}}</pre>
+   </div>
+   <hr>
+   <div>
+     <h4><<< Received Tokens</h4>
+     <pre>{{.Tokens}}</pre>
+     <pre style="background-color: #F0F8FF; font-size: x-small;">
+<b>ID Token Decoded:</b>
+{{.IdToken}}</pre>
+     <pre style="background-color: #F0F8FF; font-size: x-small;">
+<b>Access Token Decoded:</b>
+{{.AccessToken}}</pre>
+   </div>
+   
+</div>
+{{template "footer"}}

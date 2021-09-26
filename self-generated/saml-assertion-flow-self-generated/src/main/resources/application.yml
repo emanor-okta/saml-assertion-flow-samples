@@ -1,0 +1,29 @@
+server:
+  port: 8000
+
+spring:
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+
+okta:
+  saml2:
+    certificate: {PATH_TO_CERT_PEM}
+    private-key: {PATH_TO_KEY_PEM}
+    issuer: {SAML_ISSUER_URI}
+    acs: {SAML_ACS_URL}
+    audience: {SAML_AUDIENCE}
+  oidc:
+    issuer: {OKTA_ISSUER_WITH_SAML_ASSERTION_ENABLED}
+    client-id: {OIDC_APP_ID_SAML_ASSERTION_ENABLED}
+    client-secret: {OIDC_APP_SECRET}
+    scopes: openid,profile,email,offline_access,saml_flow
+  authorization:
+    server1: https://{OKTA_ORG}/oauth2/{AS_SAML_ASSERTION_ENABLED}
+    server2: https://{OKTA_ORG}/oauth2/default

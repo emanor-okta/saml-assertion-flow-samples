@@ -1,0 +1,23 @@
+{{template "header" .}}
+
+
+<div id="content" class="ui text container">
+  <h2>Keycloak Login</h2>
+
+  <div>
+    <form action="/login" method="post">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" name="username" placeholder="key1@cloak.com">
+            <small id="saml1" class="form-text text-muted">Keycloak username</small>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" name="password" placeholder="0kt@dev">
+            <small id="saml2" class="form-text text-muted">Keycloak password</small>
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+  </div>
+</div>
+{{template "footer"}}

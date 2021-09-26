@@ -1,0 +1,38 @@
+server:
+  port: 8000
+
+spring:
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          issuer-uri: https://okta.oktamanor.com/oauth2/aus5qj9tdEkuA12S71d6
+
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+
+okta:
+#  oauth2:
+#    issuer: https://okta.oktamanor.com/oauth2/aus5qj9tdEkuA12S71d6
+#    audience: http://localhost:5000
+  saml2:
+    certificate: /Users/erikmanor/Downloads/manual-cert.pem
+    private-key: /Users/erikmanor/Downloads/manual-key.pem
+    issuer: http://localhost:8080/manual/test
+    acs: https://okta.oktamanor.com/sso/saml2/0oa1dzo2n7qJf8PtP1d7
+    audience: https://www.okta.com/saml2/service-provider/spdildwmqmtqywmstneg
+  oidc:
+    issuer: https://okta.oktamanor.com/oauth2/aus5qj9tdEkuA12S71d6
+    client-id: 0oa189z17zmzq2DFe1d7
+    client-secret: 1uerZ_X4t2-B1TScI4bBUHM_H-1kQbIY77hlAehT
+    scopes: openid,profile,email,offline_access,saml_flow
+  authorization:
+    server1: https://okta.oktamanor.com/oauth2/aus5qj9tdEkuA12S71d6
+    server2: https://okta.oktamanor.com/oauth2/default
