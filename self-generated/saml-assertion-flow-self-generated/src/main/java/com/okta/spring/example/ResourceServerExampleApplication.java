@@ -80,8 +80,11 @@ public class ResourceServerExampleApplication {
             messages.add(new Message("Hello, world!"));
             messages.add(new Message("I am a robot."));
 
-            for (Object o : ((JSONArray)extendedResult.get("messages")).toList()) {
-                messages.add(new Message((String)((Map)o).get("text")));
+            JSONArray extendedMessages = (JSONArray)extendedResult.get("messages");
+            if (extendedMessages != null) {
+                for (Object o : extendedMessages.toList()) {
+                    messages.add(new Message((String) ((Map) o).get("text")));
+                }
             }
 
             result.put("messages", messages);
