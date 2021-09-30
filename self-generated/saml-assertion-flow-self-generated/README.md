@@ -1,6 +1,6 @@
 # Self Generate SAML Assertion Example
 
-This sample application demonstrates a resource server receiving a request containing a bearer Access Token. This subject in this token is used to generate a SAML Assertion and exchange it for an Access Token to be used to call another resource server.
+This sample application demonstrates a resource server receiving a request containing a Bearer Access Token. The subject in this token is used to generate a SAML Assertion and exchange it for an Access Token to be used to call another resource server.
 The first Access Token is received from the sample React Application located one directory up in the [okta-hosted-login](../okta-hosted-login) folder.
 
 ## Prerequisites
@@ -8,7 +8,7 @@ The first Access Token is received from the sample React Application located one
 Before running this sample, you will need the following:
 
 * An Okta Developer Account, you can sign up for one at https://developer.okta.com/signup/.
-* Configure [okta-hosted-login](../okta-hosted-login) with the details from the SPA application you setup below.
+* Configure [okta-hosted-login](../okta-hosted-login) SPA application following the instructions from that README.
 
 ## Setup This Example
 #### Setup the SAML IdP in Okta to be used with this app.
@@ -45,6 +45,16 @@ Before running this sample, you will need the following:
 11. Edit `/src/main/resources/application.yml` and modify the SAML section with the values from above.
 
 #### Setup an Authorization Server for the SAML Assertion Flow
+1. Navigate to **Security** > **API** > **Authorization servers** > **Add Authorization Server**.
+2. Copy down the value for **Issuer**
+3. Naviagte to **Scopes** > **Add Scope**
+4. For **Name**, **Display Name**, and **Description** enter `saml_flow` then **save**.
+5. Navigate to **Access Policies** > **Add Policy**
+6. Enter `SAML Flow` for **Name** and **Description**
+7. Select **The following clients** and add the above OIDC application just created, then **Create Policy**.
+8. Select **Add Rule**
+9. Provide a name and only allow Grant Types **Authorization Code** and **SAML 2.0 Assertion**, then **Create Rule**
+10. Edit `/src/main/resources/application.yml` and modify the OIDC section with the **issuer**, **Client ID**, and **Client secret** values. 
 
 ```yaml
   oidc:
@@ -52,39 +62,17 @@ Before running this sample, you will need the following:
     client-id: {OIDC_APP_ID_SAML_ASSERTION_ENABLED}
     client-secret: {OIDC_APP_SECRET}
     scopes: openid,profile,email,offline_access,saml_flow
+  authorization:
+    server1: https://{OKTA_ORG}/oauth2/{AS_SAML_ASSERTION_ENABLED} #same as issuer under oidc
+    server2: https://{OKTA_ORG}/oauth2/default
 ```
 
 **backend:**
 ```bash
-cd resource-server
-mvn -Dokta.oauth2.issuer=https://{yourOktaDomain}/oauth2/default
+./mvnw spring-boot:run
 ```
 > **NOTE:** The above command starts the resource server on port 8000. You can browse to `http://localhost:8000` to ensure it has started. If you get the message "401 Unauthorized", it indicates that the resource server is up. You will need to pass an access token to access the resource, which will be done by the front-end below.
 
 **front-end:**
 
-Instead of using one of our front-end sample applications listed above, you can also use the [front-end](../front-end) within this repo to quickly test the resource server.
-To start the front-end, you need to gather the following information from the Okta Developer Console:
-
-- **Client Id** - The client ID of the SPA application that you created earlier. This can be found on the "General" tab of an application, or the list of applications. The resource server will validate that tokens have been minted for this application.
-- **Base URL** - This is the URL of the developer org that you created. For example, `https://dev-1234.oktapreview.com`.
-
-Now start the front-end.
-
-```bash
-cd front-end
-mvn \
-  -Dokta.oauth2.issuer=https://{yourOktaDomain}/oauth2/default \
-  -Dokta.oauth2.client-id={clientId}
-```
-
-Browse to: `http://localhost:8080/` to login!
-
-> **NOTE:** If you want to use one of our front-end samples, open a new terminal window and run the [front-end sample project of your choice](Prerequisites).  Once the front-end sample is running, you can navigate to http://localhost:8080 in your browser and log in to the front-end application.  Once logged in, you can navigate to the "Messages" page to see the interaction with the resource server.
-
-
-[Authorization Code Flow + PKCE]: https://developer.okta.com/docs/guides/implement-auth-code-pkce/overview/
-[Okta Angular Sample Apps]: https://github.com/okta/samples-js-angular
-[Okta Vue Sample Apps]: https://github.com/okta/samples-js-vue
-[Okta React Sample Apps]: https://github.com/okta/samples-js-react
-[OIDC SPA Setup Instructions]: https://developer.okta.com/authentication-guide/implementing-authentication/implicit#1-setting-up-your-application
+Follow the instructions from [okta-hosted-login](../okta-hosted-login) to configure and start the front-end App.
