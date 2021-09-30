@@ -1,23 +1,58 @@
-# Okta Spring Security Resource Server Example
+# Self Generate SAML Assertion Example
 
-This sample application authenticates requests against your Spring application, using access tokens.
-
-The access tokens are obtained via the [Authorization Code Flow + PKCE][].  As such, you will need to use one of our front-end samples with this project.  It is the responsibility of the front-end to authenticate the user, then use the obtained access tokens to make requests to this resource server.
+This sample application demonstrates a resource server receiving a request containing a bearer Access Token. This subject in this token is used to generate a SAML Assertion and exchange it for an Access Token to be used to call another resource server.
+The first Access Token is received from the sample React Application located one directory up in the [okta-hosted-login](../okta-hosted-login) folder.
 
 ## Prerequisites
 
 Before running this sample, you will need the following:
 
 * An Okta Developer Account, you can sign up for one at https://developer.okta.com/signup/.
-* An Okta Application, configured for Singe-Page App (SPA) mode. This is done from the Okta Developer Console and you can find instructions [here][OIDC SPA Setup Instructions].  When following the wizard, use the default properties.  They are designed to work with our sample applications.
-* One of our front-end sample applications to demonstrate the interaction with the resource server:
-  * [Okta Angular Sample Apps][]
-  * [Okta React Sample Apps][]
-  * [Okta Vue Sample Apps][]
+* Configure [okta-hosted-login](../okta-hosted-login) with the details from the SPA application you setup below.
 
-A typical resource-server requires a frontend and a backend application, so you will need to start each process:
+## Setup This Example
+#### Setup the SAML IdP in Okta to be used with this app.
+1. Generate a a self signed certificate to be used for testing with the following openSSL command, `openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 365 -nodes -subj 'CN={YOUR_ORG_NAME}'`. Keep these in an accessible location.
+2. Login to your Org and navigate to **security** > **identity providers**
+3. Click **Add Identity Provider** and select **Add SAML 2.0 IdP**.
+4. Enter a Name for your IdP.
+5. For **IdP Username** select **idpuser.subjectNameId**.
+6. Under SAML Protocol Settings for **Idp Issuer URI** enter `http://localhost:8080/self/generated`. For the **Idp Single Sign-On URL** enter `http://localhost:8080/self/generated/saml`.
+7. For IdP Signature Certificate browse to where **cert.pem** was saved and upload it.
+8. Click **Add Identity Provider**.
+9. After the IdP is created from the Identity Providers screen click the drop down arrow on the left hand side of the IdP just created and copy down the values of the **Assertion Consumer Service URL** and **Audience URI**.
+10. Edit `/src/main/resources/application.yml` and modify the SAML section with the values from above.
+```yaml
+  saml2:
+    certificate: {PATH_TO_CERT_PEM}
+    private-key: {PATH_TO_KEY_PEM}
+    issuer: {SAML_ISSUER_URI}
+    acs: {SAML_ACS_URL}
+    audience: {SAML_AUDIENCE}
+```
 
-## Running This Example
+#### Setup the OIDC App to use for the SAML Assertion Token Exchange
+1. Navigate to **applications** > **applications** > **Create App Integration**
+2. Select **OIDC - OpenID Connect** > **Native Application** > **Next**
+3. Give it a meaningful name
+4. Select Grant Types **Authorization Code**, **Refresh Token**, and **SAML 2.0 Assertion**
+5. For **Assignments** select **Skip group assignment for now**
+6. Keep the rest of the defaults, **save**
+7. From the **General** tab under **Client Credentials** click **edit**.
+8. Select **Use Client Authentication** and save.
+9. Make note of the **Client ID** and **Client secret** values.
+10. Click **Assignments** and add a test user.
+11. Edit `/src/main/resources/application.yml` and modify the SAML section with the values from above.
+
+#### Setup an Authorization Server for the SAML Assertion Flow
+
+```yaml
+  oidc:
+    issuer: {OKTA_ISSUER_WITH_SAML_ASSERTION_ENABLED}
+    client-id: {OIDC_APP_ID_SAML_ASSERTION_ENABLED}
+    client-secret: {OIDC_APP_SECRET}
+    scopes: openid,profile,email,offline_access,saml_flow
+```
 
 **backend:**
 ```bash
