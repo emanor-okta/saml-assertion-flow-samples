@@ -70,7 +70,7 @@ public class SAMLAssertion {
 
         Document document = Util.loadXML(assertion);
         Node assertionNode = Utils.getAssertionNode(document, assertionId);
-        assertion = Util.addSign(assertionNode, privateKey, certificate, Constants.RSA_SHA1, Constants.SHA1);
+        assertion = Util.addSign(assertionNode, privateKey, certificate, Constants.RSA_SHA256, Constants.SHA1);
 //        System.out.println(assertion);
         assertion = Base64.getEncoder().encodeToString(assertion.getBytes());
 //        System.out.println(assertion);

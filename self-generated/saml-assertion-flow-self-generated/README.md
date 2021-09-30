@@ -69,7 +69,7 @@ Before running this sample, you will need the following:
 
 **backend:**
 ```bash
-./mvnw spring-boot:run
+./mvnw
 ```
 > **NOTE:** The above command starts the resource server on port 8000. You can browse to `http://localhost:8000` to ensure it has started. If you get the message "401 Unauthorized", it indicates that the resource server is up. You will need to pass an access token to access the resource, which will be done by the front-end below.
 

@@ -97,8 +97,8 @@ public class ResourceServerExampleApplication {
         public Map<String, Object> extendedMessages(JwtAuthenticationToken authentication) {
             Map<String, Object> result = new HashMap<>();
             result.put("messages", Arrays.asList(
-                    new Message("SHALL WE"),
-                    new Message("PLAY A GAME?")
+                    new Message("SAML Assertion"),
+                    new Message("Flow Messages")
             ));
 
             return result;
