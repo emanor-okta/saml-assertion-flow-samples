@@ -1,18 +1,22 @@
 # Self Generate SAML Assertion Example
 
-This sample application demonstrates a resource server receiving a request containing a Bearer Access Token. The subject in this token is used to generate a SAML Assertion and exchange it for an Access Token to be used to call another resource server.
-The first Access Token is received from the sample React Application located one directory up in the [okta-hosted-login](../okta-hosted-login) folder.
+This sample application demonstrates a resource server receiving a request containing a Bearer Access Token. The value of the subject in this token is used to generate a SAML Assertion and exchange it for a new access token to be used to call another API with a different authorization server and added scope.
+The first Access Token is received from one of the Okta Front-end sample SPA applications referenced below.
 
 ## Prerequisites
 
 Before running this sample, you will need the following:
 
 * An Okta Developer Account, you can sign up for one at https://developer.okta.com/signup/.
-* Configure [okta-hosted-login](../okta-hosted-login) SPA application following the instructions from that README.
+* Configure one of the below Okta Front-end sample SPA applications.
+  * [Okta Angular Sample Apps](https://github.com/okta/samples-js-angular)
+  * [Okta Vue Sample Apps](https://github.com/okta/samples-js-vue)
+  * [Okta React Sample Apps](https://github.com/okta/samples-js-react)
+
 
 ## Setup This Example
-#### Setup the SAML IdP in Okta to be used with this app.
-1. Generate a a self signed certificate to be used for testing with the following openSSL command, `openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 365 -nodes -subj 'CN={YOUR_ORG_NAME}'`. Keep these in an accessible location.
+#### Setup the SAML IdP in Okta to be used by the native OIDC application for the SAML Assertion Flow..
+1. Generate a a self signed certificate to be used for testing with the following openSSL command, `openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 365 -nodes -subj 'CN={YOUR_ORG_NAME}'`. Keep these .pem files in an accessible location.
 2. Login to your Org and navigate to **security** > **identity providers**
 3. Click **Add Identity Provider** and select **Add SAML 2.0 IdP**.
 4. Enter a Name for your IdP.
@@ -20,7 +24,7 @@ Before running this sample, you will need the following:
 6. Under SAML Protocol Settings for **Idp Issuer URI** enter `http://localhost:8080/self/generated`. For the **Idp Single Sign-On URL** enter `http://localhost:8080/self/generated/saml`.
 7. For IdP Signature Certificate browse to where **cert.pem** was saved and upload it.
 8. Click **Add Identity Provider**.
-9. After the IdP is created from the Identity Providers screen click the drop down arrow on the left hand side of the IdP just created and copy down the values of the **Assertion Consumer Service URL** and **Audience URI**.
+9. After the IdP is created, from the Identity Providers screen click the drop down arrow on the left hand side of the IdP just created. Copy down the values of the **Assertion Consumer Service URL** and **Audience URI**.
 10. Edit `/src/main/resources/application.yml` and modify the SAML section with the values from above.
 ```yaml
   saml2:
@@ -64,7 +68,7 @@ Before running this sample, you will need the following:
     scopes: openid,profile,email,offline_access,saml_flow
   authorization:
     server1: https://{OKTA_ORG}/oauth2/{AS_SAML_ASSERTION_ENABLED} #same as issuer under oidc
-    server2: https://{OKTA_ORG}/oauth2/default
+    server2: https://{OKTA_ORG}/oauth2/default # if the Okta front-end app does not use the default auth server, modify this value to be the same as the front-end app.
 ```
 
 **backend:**
@@ -75,4 +79,9 @@ Before running this sample, you will need the following:
 
 **front-end:**
 
-Follow the instructions from [okta-hosted-login](../okta-hosted-login) to configure and start the front-end App.
+Follow the instructions from one of the Okta Sample front-end applications used.
+  * [Okta Angular Sample Apps](https://github.com/okta/samples-js-angular)
+  * [Okta Vue Sample Apps](https://github.com/okta/samples-js-vue)
+  * [Okta React Sample Apps](https://github.com/okta/samples-js-react)
+
+
