@@ -1,2 +1,11 @@
-# saml-assertion-flow-samples
-SAML Assertion Flow Samples
+# SAML Assertion Flow Sample Applications for Okta
+
+This repository contains several sample applications that show various use-cases of thr SAML Assertion flow with Okta.
+
+Please find the sample that fits your use-case from the table below.
+
+| Sample | Description | Use-Case |
+|--------|-------------|----------|
+| [SAML Assertion Flow with an Okta SAML App](/saml-assertion-flow-with-okta) | An application that uses a SAML Response from an Okta SAML application to generate a SAML Assertion `/token` request in order to retrieve tokens from an OIDC application in Okta. | Demonstrates how the SAML Assertion Flow works and how to get a SAML assertion appropriate to be consumed by an Okta SAML IdP. Like all SAML Assertion flows, it by-passes the `/authorize` process. |
+| [SAML Assertion Flow with Keycloak](/saml-assertion-flow-keycloak) | A sample that registers a Keycloak SAML IdP instance with Okta. The Application demonstrates **programmatically** sending a SAML Request to Keycloak, authenticating with Keycloak, receiving a SAML Response from Keycloak, and using the contained SAML Assertion to do a SAML Assertion `/token` call to retrieve tokens from an OIDC application in Okta. | Use an existing trust between a SAML IdP registered with Okta to do a **SAML Assertion OAuth 2.0 flow**. |
+| [Application Trust self-generated App](/self-generated/saml-assertion-flow-self-generated) | This sample demonstrates setting up a SAML IdP Trust between a **Trusted Application** and Okta. The trusted application has the ability to generate and sign a SAML Assertion to be used in a **SAML Assertion OAuth 2.0 flow**. In this case the Trusted application is a resource server which validates an API request with an existing Bearer token. Uses the **subject** of that access token to generate/sign a SAML Assetion for that subject. This assertion is then used with the SAML Assertion flow `/token` call to acquire a new set of tokens from another authorization server in order to call another API. | When a trusted application which can validate a user principal, needs a set of tokens for an app. The principals user-agent may not be available to do an `/authorize` call, such as a server to server situation where user-context is needed and the **Client Credentials** flow would not suffice. |
