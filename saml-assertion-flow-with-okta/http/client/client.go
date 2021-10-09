@@ -1,17 +1,13 @@
 package client
 
 import (
-	// "encoding/base64"
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
 	"strings"
-
-	// "time"
 
 	"github.com/emanor-okta/saml-assertion-flow-with-okta/utils"
 	config "github.com/emanor-okta/saml-assertion-flow-with-okta/utils"
@@ -46,11 +42,10 @@ func init() {
 	jar, _ := cookiejar.New(nil)
 	client.Jar = jar
 	ClientLogger = log.New(log.Writer(), "", log.Ldate|log.Ltime|log.Lshortfile)
-	// ClientLogger.Println("\n\nTESTing")
 }
 
 func GetTokens(a string) {
-	// fmt.Printf("\n\nAssertion\n%v\n\n", a)
+	Flowstate.Error = ""
 	v := url.Values{
 		"grant_type": {"urn:ietf:params:oauth:grant-type:saml2-bearer"},
 		"scope":      {"openid profile"},
@@ -58,15 +53,26 @@ func GetTokens(a string) {
 	}
 	req, err := http.NewRequest("POST", config.TOKEN_EP, strings.NewReader(v.Encode()))
 	if err != nil {
-		log.Fatal(err)
+		ClientLogger.Println(err.Error())
+		Flowstate.Error = err.Error()
+		return
 	}
 
 	req.SetBasicAuth(config.CLIENT_ID, config.CLIENT_SECRET)
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Fatal(err)
+		ClientLogger.Println(err.Error())
+		Flowstate.Error = err.Error()
+		return
 	}
+	if resp.StatusCode > 299 {
+		err, _ := io.ReadAll(resp.Body)
+		Flowstate.Error = resp.Status + ", " + string(err)
+		ClientLogger.Println(Flowstate.Error)
+		return
+	}
+
 	defer resp.Body.Close()
 	tokens := struct {
 		Token_type   string `json:"token_type"`
@@ -75,9 +81,8 @@ func GetTokens(a string) {
 		Scope        string `json:"scope"`
 		Id_token     string `json:"id_token"`
 	}{}
-	// tokens := Tokens{}
-	fmt.Println("RESPONSE:")
-	fmt.Println(resp)
+
+	ClientLogger.Printf("\n/Token Response:\nStatus Code: %v\n%v\n", resp.StatusCode, resp)
 	res, _ := io.ReadAll(resp.Body)
 	json.Unmarshal(res, &tokens)
 	toks, _ := json.MarshalIndent(tokens, "", "  ")
@@ -86,16 +91,10 @@ func GetTokens(a string) {
 	Flowstate.IdToken = utils.FormatJSON(utils.RawDecodeB64(strings.Split(tokens.Id_token, ".")[1]))
 	Flowstate.BasicAuth = req.Header.Get("Authorization")
 	Flowstate.EmbedLink = config.EMBED_LINK
-	fmt.Println(string(res))
+	ClientLogger.Println(string(res))
 }
 
 func redirectPolicyFunc(req *http.Request, via []*http.Request) error {
-	log.Println("\n\nIn REdirect...")
-	log.Println()
-	log.Println(*req)
-	log.Println()
-	log.Println(*req.Response)
-	log.Println()
-
+	ClientLogger.Printf("\n\nIn Redirect\nRequest:\n%v\nResponse:\n%v\n\n", *req, *req.Response)
 	return nil
 }

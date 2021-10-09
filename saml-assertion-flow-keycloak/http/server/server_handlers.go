@@ -12,18 +12,11 @@ import (
 
 var tpl *template.Template
 
-// var logger *log.Logger
-
 func init() {
 	tpl = template.Must(template.ParseGlob("templates/*"))
-	// logger = log.New(log.Writer(), "", log.Lshortfile)
 }
 
 func RootHandler(res http.ResponseWriter, req *http.Request) {
-	// data := []byte("Returned Root")
-	// res.WriteHeader(200)
-	// wrote, _ := res.Write(data)
-	// fmt.Printf("Wrote %v bytes\n", wrote)
 	tpl.ExecuteTemplate(res, "home.gohtml", config.GetConfiguration())
 }
 
@@ -31,9 +24,10 @@ func RootHandler(res http.ResponseWriter, req *http.Request) {
  * /getassertion - get assertion from Keycloak, show login if no session exists
  */
 func GetAssertionHandler(res http.ResponseWriter, req *http.Request) {
-	// kcLogin := client.SendSAMLRequest()
 	client.Kclogin = *client.SendSAMLRequest()
-	if client.Kclogin.SamlResp == "" {
+	if client.Kclogin.Error != "" {
+		tpl.ExecuteTemplate(res, "error.gohtml", client.Kclogin)
+	} else if client.Kclogin.SamlResp == "" {
 		tpl.ExecuteTemplate(res, "loginform.gohtml", client.Kclogin)
 	} else {
 		completeAssertionHanlder(res, req, &client.Kclogin)
@@ -75,28 +69,33 @@ func HandleSamlResponse(res http.ResponseWriter, req *http.Request) {
 	req.ParseForm()
 	samlResp := req.PostForm.Get("SAMLResponse")
 	if samlResp != "" {
-		ass := util.GetAssertionFromOktaResponse(samlResp)
-		fmt.Printf("SAML Resp:\n%s\n", ass)
-		client.Kclogin.SamlAssertion = ass
+		sa := util.GetAssertionFromOktaResponse(samlResp)
+		ServerLogger.Printf("SAML Resp:\n%s\n", sa)
+		client.Kclogin.SamlAssertion = sa
 		GetTokens(res, req)
 		return
 	} else {
 		fmt.Println("SAMLResponse Not found..")
 		for k, v := range req.PostForm {
-			fmt.Printf("%s - %s\n", k, v)
+			ServerLogger.Printf("%s - %s\n", k, v)
 		}
 	}
 	res.Write([]byte("SAML Response"))
 }
 
 /*
- * /gettokens - calls the /token endpoint on Okta Org, presents the call history
+ * /gettokens - calls the /token endpoint then render token template
  */
 func GetTokens(res http.ResponseWriter, req *http.Request) {
 	client.GetTokens(client.Kclogin.SamlAssertion)
-	client.Kclogin.SamlReqURL = util.SAML_REQUEST_URL
-	client.Kclogin.TokenURL = util.TOKEN_EP
-	tpl.ExecuteTemplate(res, "tokens.gohtml", client.Kclogin)
+
+	if client.Kclogin.Error != "" {
+		tpl.ExecuteTemplate(res, "error.gohtml", client.Kclogin)
+	} else {
+		client.Kclogin.SamlReqURL = util.SAML_REQUEST_URL
+		client.Kclogin.TokenURL = util.TOKEN_EP
+		tpl.ExecuteTemplate(res, "tokens.gohtml", client.Kclogin)
+	}
 }
 
 /*
@@ -119,7 +118,7 @@ func ConfigHandler(res http.ResponseWriter, req *http.Request) {
 				c.CLIENT_ID = v[0]
 			case "clientSecret":
 				c.CLIENT_SECRET = v[0]
-			case "tokenEp":
+			case "tokenURL":
 				c.TOKEN_EP = v[0]
 			}
 		}

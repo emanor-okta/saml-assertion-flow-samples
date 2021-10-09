@@ -14,14 +14,9 @@ var tpl *template.Template
 
 func init() {
 	tpl = template.Must(template.ParseGlob("templates/*"))
-	// logger = log.New(log.Writer(), "", log.Lshortfile)
 }
 
 func RootHandler(res http.ResponseWriter, req *http.Request) {
-	// data := []byte("Returned Root")
-	// res.WriteHeader(200)
-	// wrote, _ := res.Write(data)
-	// fmt.Printf("Wrote %v bytes\n", wrote)
 	tpl.ExecuteTemplate(res, "home.gohtml", config.GetConfiguration())
 }
 
@@ -31,27 +26,26 @@ func HandleSamlResponse(res http.ResponseWriter, req *http.Request) {
 	if samlResp != "" {
 		client.Flowstate.SamlResp = samlResp
 		client.Flowstate.SamlRespD = util.FormatXML(util.DecodeB64(samlResp))
-		ass := util.GetAssertionFromOktaResponse(samlResp)
-		fmt.Printf("SAML Resp:\n%s\n", ass)
-		client.Flowstate.SamlAssertion = ass
-		client.Flowstate.SamlAssertionD = util.FormatXML(util.URLDecodeB64(ass))
+		sa := util.GetAssertionFromOktaResponse(samlResp)
+		ServerLogger.Printf("SAML Resp:\n%s\n", sa)
+		client.Flowstate.SamlAssertion = sa
+		client.Flowstate.SamlAssertionD = util.FormatXML(util.URLDecodeB64(sa))
 		GetTokens(res, req)
 		return
 	} else {
-		fmt.Println("SAMLResponse Not found..")
+		ServerLogger.Println("SAMLResponse Not found..")
 		for k, v := range req.PostForm {
-			fmt.Printf("%s - %s\n", k, v)
+			ServerLogger.Printf("%s - %s\n", k, v)
 		}
 	}
 	res.Write([]byte("No SAML Response"))
 }
 
 /*
- * /gettokens - calls the /token endpoint on Okta Org, presents the call history
+ * /gettokens - calls the /token endpoint, renders tokens html
  */
 func GetTokens(res http.ResponseWriter, req *http.Request) {
 	client.GetTokens(client.Flowstate.SamlAssertion)
-	// client.Kclogin.SamlReqURL = util.SAML_REQUEST_URL
 	client.Flowstate.TokenURL = util.TOKEN_EP
 	values := struct {
 		client.FlowState
@@ -60,7 +54,21 @@ func GetTokens(res http.ResponseWriter, req *http.Request) {
 		client.Flowstate,
 		config.GetConfiguration().EMBED_LINK,
 	}
-	tpl.ExecuteTemplate(res, "tokens.gohtml", values)
+
+	if client.Flowstate.Error != "" {
+		fmt.Println("CALL - " + client.Flowstate.Error)
+		err := tpl.ExecuteTemplate(res, "error.gohtml", values)
+		fmt.Println(err)
+	} else {
+		// values := struct {
+		// 	client.FlowState
+		// 	EMBED_LINK string
+		// }{
+		// 	client.Flowstate,
+		// 	config.GetConfiguration().EMBED_LINK,
+		// }
+		tpl.ExecuteTemplate(res, "tokens.gohtml", values)
+	}
 }
 
 /*
@@ -71,7 +79,6 @@ func ConfigHandler(res http.ResponseWriter, req *http.Request) {
 	req.ParseForm()
 	if len(req.PostForm) > 0 {
 		for k, v := range req.PostForm {
-			fmt.Printf("%s - %s\n", k, v)
 			switch k {
 			case "clientId":
 				c.CLIENT_ID = v[0]

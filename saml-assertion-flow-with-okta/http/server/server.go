@@ -9,10 +9,8 @@ var ServerLogger *log.Logger
 
 func StartServer() {
 	http.HandleFunc("/", RootHandler)
-	// http.HandleFunc("/getassertion", GetAssertionHandler)
 	http.HandleFunc("/gettokens", GetTokens)
 	http.HandleFunc("/config", ConfigHandler)
-	// http.HandleFunc("/login", LoginHandler)
 
 	http.HandleFunc("/samlresponse", HandleSamlResponse)
 

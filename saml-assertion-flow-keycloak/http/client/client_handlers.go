@@ -32,7 +32,6 @@ func ParseKeyCloakResponse(r io.Reader) KcLogin {
 
 	doc, err := html.Parse(r)
 	if err != nil {
-		// log.Fatal(err)
 		ClientLogger.Printf("ERROR: %s\n", err)
 		kcLogin.Error = err.Error()
 		return kcLogin
@@ -40,7 +39,6 @@ func ParseKeyCloakResponse(r io.Reader) KcLogin {
 
 	var f func(*html.Node)
 	f = func(n *html.Node) {
-		// fmt.Println(*n)
 		if n.Type == html.ElementNode && n.Data == "form" {
 			// login form returned
 			found := false
@@ -93,6 +91,6 @@ func ParseKeyCloakResponse(r io.Reader) KcLogin {
 		}
 	}
 	f(doc)
-	// fmt.Printf("Returning: %p\n%v\n", &kcLogin, kcLogin)
+
 	return kcLogin
 }

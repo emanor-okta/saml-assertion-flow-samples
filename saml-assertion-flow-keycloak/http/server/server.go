@@ -3,7 +3,6 @@ package server
 import (
 	"log"
 	"net/http"
-	// handlers "github.com/emanor-okta/saml-assertion-flow-sample/http/handlers"
 )
 
 var ServerLogger *log.Logger
@@ -14,7 +13,6 @@ func StartServer() {
 	http.HandleFunc("/gettokens", GetTokens)
 	http.HandleFunc("/config", ConfigHandler)
 	http.HandleFunc("/login", LoginHandler)
-
 	http.HandleFunc("/samlresponse", HandleSamlResponse)
 
 	ServerLogger = log.New(log.Writer(), "info: ", log.Ldate|log.Ltime|log.Lshortfile)

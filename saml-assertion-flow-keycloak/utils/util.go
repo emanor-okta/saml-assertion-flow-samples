@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/xml"
-	"fmt"
 	"strings"
 
 	"github.com/hokaccha/go-prettyjson"
@@ -41,7 +40,7 @@ func FormatXML(s string) string {
 }
 
 func FormatJSON(s string) string {
-	fmt.Printf("\nV\n%v\n\n", s)
+	// fmt.Printf("\n%v\n", s)
 	formatter := prettyjson.NewFormatter()
 	formatter.DisabledColor = true
 	formatter.Indent = 3
