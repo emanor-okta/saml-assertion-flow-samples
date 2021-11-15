@@ -16,7 +16,7 @@ Relevant Settings:
 
 ### To Install
 ```
-git clone https://github.com/emanor-okta/saml-assertion-flow-with-okta.git
+git clone https://github.com/emanor-okta/saml-assertion-flow-samples.git
 cd saml-assertion-flow-with-okta
 go mod tidy
 ```
