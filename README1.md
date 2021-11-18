@@ -1,22 +1,3 @@
----
-layout: blog_post
-title: "OAuth SAML 2.0 Assertion Grant Type"
-author:
-by: advocate|contractor
-communities: [devops,security,go]
-description: "Learn how to setup the SAML 2.0 Grant Type and manually walk through the flow"
-tags: [oauth2, oidc, go, saml2]
-tweets:
-- ""
-- ""
-- ""
-image:
-type: awareness|conversion
----
-
-:toc: macro
-:page-liquid:
-:experimental:
 
 Security Assertion Markup Language (SAML) is an open standard for exchanging authentication and authorization data between parties, in particular, between an identity provider and a service provider. The relationship between both providers sets up a trust relationship. The https://datatracker.ietf.org/doc/html/draft-ietf-oauth-saml2-bearer[SAML 2.0 Profile for OAuth 2.0 Client Authentication and Authorization Grants], allow an OAuth/OIDC client to use this existing trust. By providing a valid SAML Assertion to the authorization servers `/token` endpoint, the client can exchange an assertion for access/id tokens without requiring the client approval authorization step. This tutorial will demonstrate how to set up the grant type, then manually exchange a SAML Assertion for tokens. Afterward, an optional application can be configured to demonstrate the flow.
 
