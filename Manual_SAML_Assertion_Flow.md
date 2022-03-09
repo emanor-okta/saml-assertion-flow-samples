@@ -171,7 +171,7 @@ The flow starts with Okta sending a SAML Response to the SAML Service Provider A
 
 3.  As part of the form data sent to `https://httpbin.org/post` should be a **SAMLResponse**. Copy the contents of the SAMLResponse not including the opening/closing quotes.
 
-image::{% asset\_path *blog/saml-assertion-flow-1/httpbin.png* %}\[alt=SAML Response Sent to Service App,width=800,align=center\]
+![SAML Response sent to httpbin.org](saml-assertion-flow-with-okta/.img/httpbin.png)
 
 1.  Navigate to `https://www.base64decode.org`.
 
@@ -183,7 +183,7 @@ image::{% asset\_path *blog/saml-assertion-flow-1/httpbin.png* %}\[alt=SAML Resp
 
 5.  Copy the contents of the assertion including both opening and closing **saml2:assertion** tags.
 
-image::{% asset\_path *blog/saml-assertion-flow-1/resp\_decoded.png* %}\[alt=SAML Response Decoded,width=800,align=center\]
+![SAML Response Decoded](saml-assertion-flow-with-okta/.img/resp\_decoded.png)
 
 1.  Navigate to `https://www.base64encode.org`
 
@@ -193,7 +193,7 @@ image::{% asset\_path *blog/saml-assertion-flow-1/resp\_decoded.png* %}\[alt=SAM
 
 This produces the needed SAML assertion to make the `/token` call for your OIDC application.
 
-image::{% asset\_path *blog/saml-assertion-flow-1/assertion\_encoded.png* %}\[alt=SAML Assertion Enecoded,width=800,align=center\]
+![SAML Assertion Enecoded](saml-assertion-flow-with-okta/.img/assertion\_encoded.png)
 
 1.  With the encoded SAML Assertion, use [cURL](https://curl.se/) or [Postman](https://www.postman.com/) to make a call to the `/token` endpoint of the configured authorization server.
 
@@ -240,7 +240,7 @@ Configuring this flow often takes a bit of troubleshooting to get it dialed in c
 
 # Sample Application
 
-image::{% asset\_path *blog/saml-assertion-flow-1/sample.gif* %}\[alt=Sample App,width=800,align=center\]
+![Sample App](saml-assertion-flow-with-okta/.img/sample.gif)
 
 If the above was configured successfully, you may want to try the sample application. It requires [Golang](https://golang.org/dl/) (1.16+).
 
