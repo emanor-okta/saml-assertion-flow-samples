@@ -1,6 +1,6 @@
 okta_app:
     client_id: 0oa1bo9700jGoBtRu5d7
-    client_secret: itmA1m7UlV100VfAoDR5VEg90U48wDQ6i4C6BdFn
+    client_secret: 1yLhplXlGtBSWDZvDzDmlkE_LMkwA3eA0LvmsfN_yNfoC36ndU8lnb_iqUYXgZ9e
     token_ep: https://dev-96797994.okta.com/oauth2/default/v1/token
     embed_link: https://dev-96797994.okta.com/home/dev-96797994_samlassertionflowidp_1/0oa1bo87lk9pbiqSE5d7/aln1boe8uoA9lB4YI5d7
 configured: true
